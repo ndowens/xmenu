@@ -1,0 +1,36 @@
+PROG = xmenu
+SRCS = ${PROG}.c
+OBJS = ${SRCS:.c=.o}
+X11INC = @X11INC@
+X11LIB = @X11LIB@
+LIBDIR = @LIBDIR@
+INCDIR = @INCDIR@
+PREFIX = @PREFIX@
+CC = @CC@
+CFLAGS = @CFLAGS@
+LDFLAGS = @LDFLAGS@
+
+all: ${PROG}
+
+${PROG}: ${OBJS}
+	${CC} -o $@ ${OBJS} ${LDFLAGS}
+
+${OBJS}: config.h ${PROG}.h
+
+.c.o:
+	${CC} ${CFLAGS} -c $<
+
+clean:
+	-rm ${OBJS} ${PROG}
+
+install: all
+	mkdir -p ${DESTDIR}${PREFIX}${BINDIR}
+	install -m 755 ${PROG} ${DESTDIR}${PREFIX}${BINDIR}/${PROG}
+	mkdir -p ${DESTDIR}${MANPREFIX}/man1
+	install -m 644 ${PROG}.1 ${DESTDIR}${PREFIX}${MANPREFIX}/man1/${PROG}.1
+
+uninstall:
+	rm -f ${DESTDIR}$(PREFIX)/@bindir@/${PROG}
+	rm -f ${DESTDIR}@mandir@/man1/${PROG}.1
+
+.PHONY: all clean install uninstall
